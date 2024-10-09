@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../redux/slices/authSlice";
+import { login, resetState } from "../../redux/slices/authSlice";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -29,7 +29,10 @@ export default function Login() {
     if (isSuccess) {
       navigate("/profile");
     }
-  }, [isSuccess, navigate]);
+    return () => {
+      dispatch(resetState());
+    };
+  }, [isSuccess, navigate, dispatch]);
 
   return (
     <div>

@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../../redux/slices/authSlice";
+import { register, resetState } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { isLoading, isError, isSuccess, message } = useSelector((state) => {
     return state.auth;
   });
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,7 +23,10 @@ export default function Register() {
     if (isSuccess) {
       navigate("/login");
     }
-  }, [isSuccess, navigate]);
+    return () => {
+      dispatch(resetState());
+    };
+  }, [isSuccess, navigate, dispatch]);
 
   function handleChange(event) {
     const { name, value } = event.target;
