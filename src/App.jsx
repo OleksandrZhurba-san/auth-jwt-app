@@ -4,7 +4,7 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./components/protectedRoute";
-import { Flex, Menu } from "antd";
+import { Flex, Layout, Menu } from "antd";
 import { useEffect, useState } from "react";
 import {
   HomeOutlined,
@@ -13,6 +13,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import Home from "./pages/home";
+import { Content, Header } from "antd/es/layout/layout";
 
 function App() {
   const [current, setCurrent] = useState("");
@@ -21,6 +22,7 @@ function App() {
   function handleIsLoggedIn() {
     return token ? setIsLoggedIn(true) : setIsLoggedIn(false);
   }
+
   const onClick = (event) => {
     setCurrent(event.key);
   };
@@ -51,17 +53,13 @@ function App() {
     handleIsLoggedIn();
   }, [isLoggedIn, handleIsLoggedIn]);
   return (
-    <Flex gap="middle" vertical justify="start" align="center">
-      {/* <nav>
-        <Link to="/">Home</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/profile">Profile</Link>
-      </nav> */}
+    <Flex vertical align="center" justify="center" gap="middle" wrap>
       <Menu
         onClick={onClick}
         selectedKeys={{ current }}
         mode="horizontal"
         items={items}
+        style={{ width: "100%", display: "flex", justifyContent: "center" }}
       />
       <Routes>
         <Route path="/" element={<Home />} />

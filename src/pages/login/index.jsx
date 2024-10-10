@@ -8,24 +8,15 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: "", password: "" });
   const [clientReady, setClientReady] = useState(false);
   const [form] = Form.useForm();
-  // const { email, password } = formData;
 
   const { isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-  function handleSubmit() {
-    dispatch(login({ email: formData.email, password: formData.password }));
+  function handleSubmit({ email, password }) {
+    dispatch(login({ email, password }));
   }
   function handleReset() {
     form.resetFields();
@@ -44,17 +35,23 @@ export default function Login() {
 
   return (
     <>
-      <Form form={form} name="login" autoComplete="off" onFinish={handleSubmit}>
+      <Form
+        form={form}
+        name="login"
+        autoComplete="off"
+        onFinish={handleSubmit}
+        initialValues={{ email: "", password: "" }}
+      >
         <Form.Item
           name="email"
-          rules={[{ required: true, message: "Please input your email" }]}
+          rules={[
+            { type: "email", message: "The input is not valid E-mail" },
+            { required: true, message: "Please input your email" },
+          ]}
         >
           <Input
             prefix={<UserOutlined />}
             name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
             placeholder="Login\Email"
           />
         </Form.Item>
@@ -67,13 +64,7 @@ export default function Login() {
             },
           ]}
         >
-          <Input
-            prefix={<LockOutlined />}
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder="Password" />
         </Form.Item>
         <Flex gap={8}>
           <Form.Item shouldUpdate>
@@ -99,8 +90,6 @@ export default function Login() {
           </Form.Item>
         </Flex>
       </Form>
-      {isError && <p>{message}</p>}
-      {isSuccess && <p>Login successful</p>}
     </>
   );
 }
