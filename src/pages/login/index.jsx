@@ -5,7 +5,7 @@ import { login, resetState } from "../../redux/slices/authSlice";
 import { Flex, Button, Form, Input, Space } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
-export default function Login() {
+export default function Login({ setCurrent }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [clientReady, setClientReady] = useState(false);
@@ -26,12 +26,13 @@ export default function Login() {
     setClientReady(true);
     if (isSuccess) {
       navigate("/profile");
+      setCurrent("profile");
     }
 
     return () => {
       dispatch(resetState());
     };
-  }, [isSuccess, navigate, dispatch]);
+  }, [isSuccess, navigate, dispatch, setCurrent]);
 
   return (
     <>

@@ -1,19 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { register, resetState } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import { Button, Flex, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 
 export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  const { isLoading, isError, isSuccess, message } = useSelector((state) => {
+  const { isLoading, isSuccess } = useSelector((state) => {
     return state.auth;
   });
-
-  // const { email, password, confirmPassword } = formData;
 
   useEffect(() => {
     if (isSuccess) {
@@ -24,14 +22,6 @@ export default function Register() {
     };
   }, [isSuccess, navigate, dispatch]);
 
-  // function handleChange(event) {
-  //   const { name, value } = event.target;
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  //   console.log(`Name:${name} Value:${value}`);
-  // }
   function handleSubmit({ email, password }) {
     dispatch(register({ email, password }));
   }

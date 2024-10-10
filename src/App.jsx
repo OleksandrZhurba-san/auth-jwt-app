@@ -4,7 +4,7 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./components/protectedRoute";
-import { Flex, Layout, Menu } from "antd";
+import { Flex, Menu } from "antd";
 import { useEffect, useState } from "react";
 import {
   HomeOutlined,
@@ -13,15 +13,12 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import Home from "./pages/home";
-import { Content, Header } from "antd/es/layout/layout";
+import { useSelector } from "react-redux";
 
 function App() {
-  const [current, setCurrent] = useState("");
+  const [current, setCurrent] = useState("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const token = localStorage.getItem("token");
-  function handleIsLoggedIn() {
-    return token ? setIsLoggedIn(true) : setIsLoggedIn(false);
-  }
+  const { token } = useSelector((state) => state.auth);
 
   const onClick = (event) => {
     setCurrent(event.key);
@@ -36,6 +33,7 @@ function App() {
       key: "login",
       label: <Link to="/login">Login</Link>,
       icon: <LoginOutlined />,
+      disabled: isLoggedIn,
     },
     {
       key: "register",
@@ -46,30 +44,34 @@ function App() {
       key: "profile",
       label: <Link to="/profile">Profile</Link>,
       icon: <UserOutlined />,
-      disabled: isLoggedIn,
+      disabled: !isLoggedIn,
     },
   ];
   useEffect(() => {
-    handleIsLoggedIn();
-  }, [isLoggedIn, handleIsLoggedIn]);
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [token]);
   return (
     <Flex vertical align="center" justify="center" gap="middle" wrap>
       <Menu
         onClick={onClick}
-        selectedKeys={{ current }}
+        selectedKeys={[current]}
         mode="horizontal"
         items={items}
         style={{ width: "100%", display: "flex", justifyContent: "center" }}
       />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setCurrent={setCurrent} />} />
         <Route path="/register" element={<Register />} />
         <Route
           path="/profile"
           element={
             <ProtectedRoute>
-              <Profile />
+              <Profile setCurrent={setCurrent} />
             </ProtectedRoute>
           }
         />
