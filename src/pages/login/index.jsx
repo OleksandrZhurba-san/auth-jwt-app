@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, resetState } from "../../redux/slices/authSlice";
 import { Flex, Button, Form, Input, Space } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [clientReady, setClientReady] = useState(false);
   const [form] = Form.useForm();
   // const { email, password } = formData;
 
@@ -30,6 +32,7 @@ export default function Login() {
   }
 
   useEffect(() => {
+    setClientReady(true);
     if (isSuccess) {
       navigate("/profile");
     }
@@ -40,52 +43,64 @@ export default function Login() {
   }, [isSuccess, navigate, dispatch]);
 
   return (
-    <Flex justify="center" align="center">
-      <Form
-        form={form}
-        name="login"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 500 }}
-        autoComplete="off"
-        onFinish={handleSubmit}
-      >
+    <>
+      <Form form={form} name="login" autoComplete="off" onFinish={handleSubmit}>
         <Form.Item
-          label="email"
           name="email"
-          rules={[{ required: true, message: "Please fill email!" }]}
+          rules={[{ required: true, message: "Please input your email" }]}
         >
-          <Input name="email" value={formData.email} onChange={handleChange} />
+          <Input
+            prefix={<UserOutlined />}
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Login\Email"
+          />
         </Form.Item>
         <Form.Item
-          label="password"
           name="password"
           rules={[
             {
               required: true,
-              message: "Please fill the password",
+              message: "Please input your password",
             },
           ]}
         >
           <Input
-            name="password"
+            prefix={<LockOutlined />}
+            type="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Password"
           />
         </Form.Item>
-        <Form.Item wrapperCol={{ span: 8, offset: 8 }}>
-          <Space>
-            <Button type="primary" htmlType="submit">
-              Login
-            </Button>
-            <Button onClick={handleReset} htmlType="button">
+        <Flex gap={8}>
+          <Form.Item shouldUpdate>
+            {() => (
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={
+                  !clientReady ||
+                  !form.isFieldsTouched(true) ||
+                  !!form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length
+                }
+              >
+                Log in
+              </Button>
+            )}
+          </Form.Item>
+          <Form.Item>
+            <Button variant="outlined" onClick={handleReset}>
               Reset
             </Button>
-          </Space>
-        </Form.Item>
+          </Form.Item>
+        </Flex>
       </Form>
       {isError && <p>{message}</p>}
       {isSuccess && <p>Login successful</p>}
-    </Flex>
+    </>
   );
 }

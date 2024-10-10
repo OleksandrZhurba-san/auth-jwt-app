@@ -2,19 +2,21 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { register, resetState } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import { Flex, Form } from "antd";
 
 export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { isLoading, isError, isSuccess, message } = useSelector((state) => {
-    return state.auth;
-  });
+  const [form] = Form.useForm();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
+  });
+
+  const { isLoading, isError, isSuccess, message } = useSelector((state) => {
+    return state.auth;
   });
 
   const { email, password, confirmPassword } = formData;
@@ -30,7 +32,10 @@ export default function Register() {
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
   function handleSubmit(event) {
     event.preventDefault();
@@ -41,8 +46,8 @@ export default function Register() {
     dispatch(register({ email, password }));
   }
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <Flex justify="center" align="center">
+      <Form onSubmit={handleSubmit}>
         <input
           onChange={handleChange}
           type="email"
@@ -62,9 +67,9 @@ export default function Register() {
           value={confirmPassword}
         />
         <button type="submit">Register</button>
-      </form>
+      </Form>
       {isError && <p>{message}</p>}
       {isSuccess && <p>Register successful</p>}
-    </div>
+    </Flex>
   );
 }
